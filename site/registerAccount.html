@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+  <title>Register Account</title>
+  <script src="../crypto-js.min.js"></script>
+  <script src="../encrypt.js"></script>
+  <script src="../getToken.js"></script>
+
+    <style>
+    /* General body styling - Soft muted background */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #d4e4e7;  /* Soft blue-gray */
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Navigation styling - Muted teal */
+    .navbar {
+      background: linear-gradient(135deg, #3d7a72 0%, #2d5a52 100%) !important;
+      padding: 5px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 100%;
+    }
+
+    .navbar .nav-link {
+      color: #e8f0f2 !important;
+      padding: 4px 12px;
+      margin: 0 4px;
+      border-radius: 3px;
+      font-weight: 500;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .navbar .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .navbar .nav-link.active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Container styling - Soft off-white */
+    .container {
+      background: #f5f7f8;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px auto;
+      width: fit-content;
+      max-width: 500px;
+    }
+
+    /* Form styling */
+    form {
+      margin: 0;
+    }
+
+    h1 {
+      color: #2d5a52;
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .mb-3 {
+      margin-bottom: 12px;
+    }
+
+    label {
+      color: #2d5a52;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 13px;
+    }
+
+    .form-control {
+      border: 1px solid #c8d4d8;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 13px;
+      transition: border-color 0.3s;
+      background: #ffffff;
+      color: #2c3e50;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-control:focus {
+      border-color: #5a9b8f;
+      outline: none;
+      box-shadow: 0 0 0 0.15rem rgba(90, 155, 143, 0.2);
+    }
+
+    /* Dropdown styling */
+    .dropdown {
+      position: relative;
+      width: 100%;
+    }
+
+    /* Select dropdown styling */
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c3e50' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+      cursor: pointer;
+    }
+
+    .dropdown-toggle {
+      background-color: #5a9b8f;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .dropdown-toggle:hover {
+      background-color: #4a8b7f;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: #ffffff;
+      border: 1px solid #c8d4d8;
+      border-radius: 4px;
+      margin-top: 2px;
+      width: 100%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      list-style: none;
+      padding: 0;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 6px 10px;
+      color: #2c3e50;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: #e8f0f3;
+    }
+
+    /* Button styling */
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .btn-secondary {
+      background-color: #5a9b8f;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4a8b7f;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin: 15px;
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <a class="nav-link active" aria-current="page" href="registerAccount.html">Register Account</a>
+    <a class="nav-link" href="listAccount.html">List Account</a>
+  </nav>
+
+  <div class="container">
+    <h1>Register Account</h1>
+    <form id="login-form">
+      <div class="mb-3">
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="username" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="displayName">Account name:</label>
+        <input type="text" id="displayName" name="displayName" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="zone">Zone:</label>
+        <select id="zone" name="zone" class="form-control" required>
+          <option value="" disabled selected>Select Zone</option>
+          <option value="E">E</option>
+          <option value="W">W</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="server">Server:</label>
+        <input type="number" id="server" name="server" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-secondary">Register</button>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+
+    // Form submission
+    loginForm.addEventListener('submit', event => {
+      event.preventDefault();
+
+      const username = loginForm.elements.username.value;
+      const password = loginForm.elements.password.value;
+      const server = loginForm.elements.server.value;
+      const displayName = loginForm.elements.displayName.value;
+      const selectedZone = loginForm.elements.zone.value; // Get zone from select
+
+      const authId = Date.now();
+      const authInfo = {
+        id: authId,
+        username: username,
+        password: password,
+        server: server,
+        displayName: displayName,
+        zone: selectedZone
+      };
+
+      const storedAuths = JSON.parse(localStorage.getItem('auths')) || [];
+      storedAuths.push(authInfo);
+      localStorage.setItem('auths', JSON.stringify(storedAuths));
+
+      window.location.href = 'listAccount.html';
+    });
+  </script>
+</body>
+
+</html>

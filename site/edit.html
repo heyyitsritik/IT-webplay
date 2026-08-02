@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Login Information</title>
+    <style>
+    /* General body styling - Soft muted background */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #d4e4e7;  /* Soft blue-gray */
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Navigation styling - Muted teal */
+    .navbar {
+      background: linear-gradient(135deg, #3d7a72 0%, #2d5a52 100%) !important;
+      padding: 5px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 100%;
+    }
+
+    .navbar .nav-link {
+      color: #e8f0f2 !important;
+      padding: 4px 12px;
+      margin: 0 4px;
+      border-radius: 3px;
+      font-weight: 500;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .navbar .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .navbar .nav-link.active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Container styling - Soft off-white */
+    .container {
+      background: #f5f7f8;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px auto;
+      width: fit-content;
+      max-width: 500px;
+    }
+
+    /* Form styling */
+    form {
+      margin: 0;
+    }
+
+    h1 {
+      color: #2d5a52;
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .mb-3 {
+      margin-bottom: 12px;
+    }
+
+    .mt-3 {
+      margin-top: 12px;
+    }
+
+    .mt-4 {
+      margin-top: 16px;
+    }
+
+    .mt-5 {
+      margin-top: 0;
+    }
+
+    label {
+      color: #2d5a52;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 13px;
+    }
+
+    .form-control {
+      border: 1px solid #c8d4d8;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 13px;
+      transition: border-color 0.3s;
+      background: #ffffff;
+      color: #2c3e50;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-control:focus {
+      border-color: #5a9b8f;
+      outline: none;
+      box-shadow: 0 0 0 0.15rem rgba(90, 155, 143, 0.2);
+    }
+
+    /* Select dropdown styling */
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c3e50' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+      cursor: pointer;
+    }
+
+    /* Input group for password with toggle button */
+    .input-group {
+      display: flex;
+      width: 100%;
+    }
+
+    .input-group .form-control {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      flex: 1;
+    }
+
+    .input-group .btn {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      width: auto;
+      margin-top: 0;
+    }
+
+    /* Button styling */
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      background-color: #5a9b8f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #4a8b7f;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-outline-secondary {
+      background-color: #90a4ae;
+      color: white;
+      border: 1px solid #90a4ae;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #78909c;
+      border-color: #78909c;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin: 15px;
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="nav-link" href="registerAccount.html">Register Account</a>
+    <a class="nav-link" href="listAccount.html">List Account</a>
+</nav>
+
+<div class="container">
+    <h1 class="mt-5">Edit Login Information</h1>
+    <div id="editForm" class="mt-3"></div>
+</div>
+
+<script>
+    // Retrieve user index from URL
+    const params = new URLSearchParams(window.location.search);
+    const userIndex = parseInt(params.get('userIndex'));
+
+    // Retrieve all user information from localStorage
+    let auths = JSON.parse(localStorage.getItem('auths'));
+
+    // Check if user index is valid
+    if (!isNaN(userIndex) && auths && auths.length > userIndex) {
+        // Retrieve specific user information
+        const user = auths[userIndex];
+
+        // Create user information editing form
+        const form = document.createElement('form');
+        form.classList.add('mt-4');
+        form.innerHTML = `
+            <div class="mb-3">
+                <label for="displayName" class="form-label">Display Name:</label>
+                <input type="text" class="form-control" id="displayName" name="displayName" value="${user.displayName}" required>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Email:</label>
+                <input type="text" class="form-control" id="username" name="username" value="${user.username}" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" value="${user.password}" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">Show</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="zone" class="form-label">Zone:</label>
+                <select id="zone" name="zone" class="form-control" required>
+                    <option value="E" ${user.zone === 'E' ? 'selected' : ''}>E</option>
+                    <option value="W" ${user.zone === 'W' ? 'selected' : ''}>W</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="server" class="form-label">Server:</label>
+                <input type="number" class="form-control" id="server" name="server" value="${user.server}" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        `;
+
+        // Add the form to the page
+        document.getElementById('editForm').appendChild(form);
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+
+        // Add event listener for the form submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Update user information in localStorage
+            auths[userIndex].displayName = document.getElementById('displayName').value;
+            auths[userIndex].username = document.getElementById('username').value;
+            auths[userIndex].password = document.getElementById('password').value;
+            auths[userIndex].server = document.getElementById('server').value;
+            auths[userIndex].zone = document.getElementById('zone').value;
+            localStorage.setItem('auths', JSON.stringify(auths));
+
+            // Show confirmation message
+            alert('Information updated successfully!');
+            
+            // Close the window after saving
+            window.close();
+        });
+    } else {
+        // Handle case where user index is invalid
+        document.getElementById('editForm').innerHTML = '<p style="color: #d9534f;">Invalid user index or data unavailable.</p>';
+    }
+</script>
+
+</body>
+</html>
