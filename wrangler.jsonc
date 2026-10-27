@@ -3,6 +3,9 @@
   "name": "it-webplay",
   "main": "src/worker.js",
   "compatibility_date": "2024-09-01",
+  "vars": {
+    "SUPABASE_URL": "https://swsbzomddsozclhhlrwy.supabase.co"
+  },
   "assets": {
     "directory": "./public"
   }
