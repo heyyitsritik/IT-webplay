@@ -1,406 +1,458 @@
 <!DOCTYPE html>
-<html data-bs-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Account List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT WebPlay</title>
   <script src="./webBrowser.js"></script>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* General body styling - Soft muted background */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0e14;
+    --surface: #151820;
+    --surface-2: #1c2030;
+    --border: #2a2e3d;
+    --text: #e2e4ea;
+    --text-dim: #7a7f94;
+    --accent: #d4a843;
+    --accent-glow: rgba(212, 168, 67, 0.15);
+    --play: #43b581;
+    --play-hover: #3ca374;
+    --danger: #e04848;
+    --danger-hover: #c93c3c;
+    --edit: #5b8dd9;
+    --clone: #d4a843;
+    --radius: 8px;
+  }
+
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #d4e4e7;  /* Soft blue-gray */
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
+  }
+
+  /* ── Nav ── */
+  nav {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
-  /* Navigation styling - Muted teal */
-  .navbar {
-    background: linear-gradient(135deg, #3d7a72 0%, #2d5a52 100%) !important;
-    padding: 5px 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    width: 100%;
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent);
   }
 
-  .navbar .nav-link {
-    color: #e8f0f2 !important;
-    padding: 4px 12px;
-    margin: 0 4px;
-    border-radius: 3px;
-    font-weight: 500;
-    font-size: 12px;
-    transition: all 0.3s;
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-links a {
+    color: var(--text-dim);
     text-decoration: none;
-    display: inline-block;
-  }
-
-  .navbar .nav-link:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  .navbar .nav-link.active {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  /* Container styling - Soft off-white */
-  .container {
-    background: #f5f7f8;  /* Very light gray, not pure white */
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    margin: 8px auto;
-    width: fit-content;
-    max-width: 95vw;
-  }
-
-  /* Form styling */
-  form {
-    margin: 0;
-  }
-
-  form label {
-    color: #2d5a52;
-    font-weight: 600;
-    margin-bottom: 2px;
-    display: block;
-  }
-
-  form h4 {
-    color: #2d5a52;
-    margin: 0;
     font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: all 0.2s;
   }
 
-  .form-control {
-    border: 1px solid #c8d4d8;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
-    transition: border-color 0.3s;
-    background: #ffffff !important;
-    color: #2c3e50 !important;
-  }
+  .nav-links a:hover { color: var(--text); background: var(--surface-2); }
+  .nav-links a.active { color: var(--accent); background: var(--accent-glow); }
 
-  .form-control:focus {
-    border-color: #5a9b8f;
-    outline: none;
-    box-shadow: 0 0 0 0.1rem rgba(90, 155, 143, 0.2);
-  }
-
-  /* Heading styling */
-  h1 {
-    color: #2d5a52;
-    font-weight: 600;
-    margin-bottom: 6px;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  /* Search input */
-  #search-input {
-    border: 1px solid #c8d4d8;
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 12px;
-    transition: border-color 0.3s;
+  /* ── Main ── */
+  main {
+    flex: 1;
+    max-width: 900px;
     width: 100%;
-    max-width: 300px;
-    display: block;
-    margin: 0 auto 6px auto;
-    background: #ffffff;
-    color: #2c3e50;
+    margin: 0 auto;
+    padding: 20px 16px;
   }
 
-  #search-input:focus {
-    border-color: #5a9b8f;
-    outline: none;
-    box-shadow: 0 0 0 0.1rem rgba(90, 155, 143, 0.2);
+  /* ── Version bar ── */
+  .version-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
   }
 
-  /* Table styling */
-  .table-responsive {
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    margin-top: 6px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  table {
-    margin-bottom: 0;
-    background: #fafbfb;  /* Very soft off-white */
-    font-size: 11px;
-    width: auto;
-    table-layout: auto;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  thead {
-    background: linear-gradient(135deg, #5a9b8f 0%, #4a8b7f 100%);  /* Soft teal gradient */
-  }
-
-  thead th {
-    color: #ffffff !important;
+  .version-bar label {
+    font-size: 12px;
     font-weight: 600;
+    color: var(--text-dim);
     text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 0.2px;
-    padding: 4px 8px;
-    border: none !important;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid #d4dfe3;
-    transition: background-color 0.2s;
-  }
-
-  /* Alternating row colors - zebra striping */
-  tbody tr:nth-child(odd) {
-    background-color: #e8f0f3;  /* Light blue-gray */
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: #d8e6ea;  /* Slightly darker blue-gray */
-  }
-
-  tbody tr:hover {
-    background-color: #c8dde3 !important;  /* Soft blue hover - more visible */
-  }
-
-  tbody td {
-    padding: 3px 8px;
-    color: #2c3e50;  /* Dark blue-gray text, not pure black */
-    vertical-align: middle;
-    border-color: #d4dfe3 !important;
+    letter-spacing: 0.5px;
     white-space: nowrap;
   }
 
-  /* Column-specific sizing */
-  tbody td:nth-child(1),
-  thead th:nth-child(1) {
-    width: 1%;
-    text-align: center;
-    padding-left: 6px;
-    padding-right: 6px;
+  .version-bar input {
+    flex: 1;
+    max-width: 160px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
   }
 
-  tbody td:nth-child(2),
-  thead th:nth-child(2) {
-    width: auto;
-    text-align: left;
-    min-width: 100px;
-  }
+  .version-bar input:focus { border-color: var(--accent); }
 
-  tbody td:nth-child(3),
-  thead th:nth-child(3) {
-    width: 1%;
-    text-align: center;
-    padding-left: 6px;
-    padding-right: 6px;
-  }
-
-  tbody td:nth-child(4),
-  thead th:nth-child(4) {
-    width: 1%;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  /* Button styling */
-  .btn {
-    padding: 3px 7px;
+  .version-bar button {
+    background: var(--accent);
+    color: #000;
     border: none;
-    border-radius: 3px;
-    font-size: 10px;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    margin: 0 1px;
+    transition: opacity 0.2s;
+  }
+
+  .version-bar button:hover { opacity: 0.85; }
+
+  /* ── Header row ── */
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+
+  .header-row h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .header-row h1 span {
+    color: var(--text-dim);
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 6px;
+  }
+
+  #search-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+    width: 200px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #search-input:focus { border-color: var(--accent); }
+  #search-input::placeholder { color: var(--text-dim); }
+
+  /* ── Account cards ── */
+  .accounts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .account-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .account-row:hover {
+    border-color: #3a3e50;
+    background: var(--surface-2);
+  }
+
+  .account-index {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    min-width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-2);
+    border-radius: 4px;
+  }
+
+  .account-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .account-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .account-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .account-actions {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    border: none;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: all 0.15s;
+    font-family: inherit;
     white-space: nowrap;
   }
 
-  .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    filter: brightness(0.95);
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-play {
+    background: var(--play);
+    color: #fff;
+    padding: 5px 14px;
+  }
+  .btn-play:hover { background: var(--play-hover); }
+
+  .btn-edit {
+    background: transparent;
+    color: var(--edit);
+    border: 1px solid var(--edit);
+  }
+  .btn-edit:hover { background: rgba(91, 141, 217, 0.1); }
+
+  .btn-clone {
+    background: transparent;
+    color: var(--clone);
+    border: 1px solid var(--clone);
+  }
+  .btn-clone:hover { background: var(--accent-glow); }
+
+  .btn-delete {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid transparent;
+    opacity: 0.5;
+  }
+  .btn-delete:hover { opacity: 1; border-color: var(--danger); background: rgba(224, 72, 72, 0.08); }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-dim);
   }
 
-  /* Submit button - Muted teal */
-  .btn-primary {
-    background-color: #5a9b8f;
-    color: white;
-    border: none;
+  .empty-state p {
+    font-size: 14px;
+    margin-bottom: 12px;
   }
 
-  .btn-primary:hover {
-    background-color: #4a8b7f;
+  .empty-state a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
   }
 
-  /* Delete button - Muted red */
-  .btn-danger {
-    background-color: #d9534f;
-    color: white;
-  }
+  /* ── Table fallback (used by registeredUsers.js) ── */
+  table { display: none; }
 
-  .btn-danger:hover {
-    background-color: #c9302c;
-  }
-
-  /* webVersion button - Muted green */
-  .btn-info {
-    background-color: #5cb85c;
-    color: white;
-  }
-
-  .btn-info:hover {
-    background-color: #4cae4c;
-  }
-
-  /* Edit button - Muted blue */
-  tbody .btn-primary {
-    background-color: #5a8fc7;
-    color: white;
-  }
-
-  tbody .btn-primary:hover {
-    background-color: #4a7fb7;
-  }
-
-  /* Clone button - Muted orange */
-  .btn-secondary {
-    background-color: #f0ad4e;
-    color: white;
-  }
-
-  .btn-secondary:hover {
-    background-color: #e09d3e;
-  }
-
-  /* Remove all extra spacing */
-  .mt-5 {
-    margin-top: 8px !important;
-  }
-
-  .mt-3 {
-    margin-top: 6px !important;
-  }
-
-  .mb-3 {
-    margin-bottom: 6px !important;
-  }
-
-  .mx-2 {
-    margin-left: 1px !important;
-    margin-right: 1px !important;
-  }
-
-  /* Column widths for better layout */
-  .col-md-2 {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .col-md-2 input {
-    flex: 1;
-    max-width: 180px;
-  }
-
-  /* Center row content */
-  .row {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .container {
-      padding: 8px;
-      margin: 6px;
-      max-width: 100%;
-    }
-
-    table {
-      font-size: 10px;
-    }
-
-    .btn {
-      padding: 2px 5px;
-      font-size: 9px;
-    }
-
-    h1 {
-      font-size: 16px;
-    }
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    main { padding: 14px 10px; }
+    .header-row { flex-direction: column; align-items: flex-start; }
+    #search-input { width: 100%; }
+    .account-actions { flex-wrap: wrap; }
+    .btn { font-size: 10px; padding: 4px 8px; }
+    nav { padding: 10px 14px; }
+    .logo { font-size: 13px; }
+    .nav-links a { font-size: 12px; padding: 5px 10px; }
   }
 </style>
-
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark">      
-      <a class="nav-link" href="registerAccount.html">Register Account</a>           
-      <a class="nav-link active" aria-current="page" href="listAccount.html">List Account</a>
-    </nav>
-  <form id="user-form" >
-    <div class="container mt-5">
-      <label for="version"><h4>Game Version :</h4></label>
-      <div class="col-md-2">
-          <input type="text" class="form-control col-md-2" id="version" name="version">
-              <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
+
+<nav>
+  <div class="logo">IT WEBPLAY</div>
+  <div class="nav-links">
+    <a href="registerAccount.html">+ Add Account</a>
+    <a href="listAccount.html" class="active">Accounts</a>
+  </div>
+</nav>
+
+<main>
+  <form id="user-form">
+    <div class="version-bar">
+      <label for="version">Game Version</label>
+      <input type="text" id="version" name="version" placeholder="e.g. 3.10.2">
+      <button type="submit">Set</button>
     </div>
   </form>
 
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-lg-12">
-        <h1> Accounts List </h1>
-        <input class="form-control mb-3" type="text" id="search-input" placeholder="Search">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <tbody id="auths-list"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  <div class="header-row">
+    <h1>Accounts <span id="account-count"></span></h1>
+    <input type="text" id="search-input" placeholder="Search accounts...">
   </div>
 
- <script src="registeredUsers.js"></script>
+  <div class="accounts-grid" id="accounts-grid"></div>
 
- <script type="text/javascript">
-    var gameVersion = localStorage.getItem('gameVersion');
-    //console.log(gameVersion);
-    if(gameVersion != null){
-      console.log(gameVersion);
-      const version = document.getElementById('version');
-      version.value = gameVersion;
-    }
-    
-    document.getElementById("user-form").addEventListener("submit", function(event) {
-      event.preventDefault(); 
+  <!-- Hidden table for registeredUsers.js compatibility -->
+  <div style="display:none">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <tbody id="auths-list"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
 
-      var versionInput = document.getElementById("version");
-      var gameVersion = versionInput.value;
+<script>
+// ── Modern account renderer (replaces table-based one) ──
+let auths = JSON.parse(window.localStorage.getItem('auths')) || [];
 
-      localStorage.setItem("gameVersion", gameVersion);
+function renderAccounts() {
+  const grid = document.getElementById('accounts-grid');
+  const countEl = document.getElementById('account-count');
+  grid.innerHTML = '';
 
-      versionInput.value = "";
+  countEl.textContent = auths.length ? `(${auths.length})` : '';
 
-      console.log("Game version submitted: " + gameVersion);
-      window.location.href = 'listAccount.html'
-    });
- </script>
+  if (auths.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <p>No accounts registered yet</p>
+        <a href="registerAccount.html">+ Add your first account</a>
+      </div>`;
+    return;
+  }
+
+  auths.forEach((auth, index) => {
+    const row = document.createElement('div');
+    row.className = 'account-row';
+    row.dataset.search = `${auth.displayName} ${auth.server} ${auth.zone || ''}`.toLowerCase();
+
+    row.innerHTML = `
+      <div class="account-index">${index + 1}</div>
+      <div class="account-info">
+        <div class="account-name">${escapeHtml(auth.displayName)}</div>
+        <div class="account-meta">Server ${auth.server}${auth.zone ? ' · Zone ' + auth.zone : ''}</div>
+      </div>
+      <div class="account-actions">
+        <button class="btn btn-play" data-action="play" data-index="${index}">Play</button>
+        <button class="btn btn-edit" data-action="edit" data-index="${index}">Edit</button>
+        <button class="btn btn-clone" data-action="clone" data-index="${index}">Clone</button>
+        <button class="btn btn-delete" data-action="delete" data-index="${index}">Delete</button>
+      </div>`;
+    grid.appendChild(row);
+  });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ── Event delegation for buttons ──
+document.getElementById('accounts-grid').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const idx = parseInt(btn.dataset.index);
+  const auth = auths[idx];
+
+  switch (btn.dataset.action) {
+    case 'play':
+      webBrowser(auth.username, auth.password, auth.zone);
+      break;
+    case 'edit':
+      window.open(`edit.html?userIndex=${idx}`, '_blank');
+      break;
+    case 'clone':
+      const cloned = { ...auth, id: Date.now() };
+      auths.splice(idx + 1, 0, cloned);
+      window.localStorage.setItem('auths', JSON.stringify(auths));
+      renderAccounts();
+      break;
+    case 'delete':
+      auths.splice(idx, 1);
+      window.localStorage.setItem('auths', JSON.stringify(auths));
+      renderAccounts();
+      break;
+  }
+});
+
+// ── Search ──
+document.getElementById('search-input').addEventListener('input', (e) => {
+  const filter = e.target.value.toLowerCase();
+  document.querySelectorAll('.account-row').forEach(row => {
+    row.style.display = row.dataset.search.includes(filter) ? '' : 'none';
+  });
+});
+
+// ── Game version ──
+var gameVersion = localStorage.getItem('gameVersion');
+if (gameVersion) {
+  document.getElementById('version').value = gameVersion;
+}
+
+document.getElementById('user-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  var versionInput = document.getElementById('version');
+  localStorage.setItem('gameVersion', versionInput.value);
+  versionInput.value = '';
+  window.location.href = 'listAccount.html';
+});
+
+// ── Init ──
+renderAccounts();
+
+// Listen for storage changes (edit page updates)
+window.addEventListener('storage', () => {
+  auths = JSON.parse(window.localStorage.getItem('auths')) || [];
+  renderAccounts();
+});
+</script>
 
 </body>
 </html>

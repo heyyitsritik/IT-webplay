@@ -1,283 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Login Information</title>
-    <style>
-    /* General body styling - Soft muted background */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #d4e4e7;  /* Soft blue-gray */
-      min-height: 100vh;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT WebPlay — Edit Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Navigation styling - Muted teal */
-    .navbar {
-      background: linear-gradient(135deg, #3d7a72 0%, #2d5a52 100%) !important;
-      padding: 5px 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      text-align: center;
-      width: 100%;
-    }
+  :root {
+    --bg: #0c0e14;
+    --surface: #151820;
+    --surface-2: #1c2030;
+    --border: #2a2e3d;
+    --text: #e2e4ea;
+    --text-dim: #7a7f94;
+    --accent: #d4a843;
+    --accent-glow: rgba(212, 168, 67, 0.15);
+    --radius: 8px;
+  }
 
-    .navbar .nav-link {
-      color: #e8f0f2 !important;
-      padding: 4px 12px;
-      margin: 0 4px;
-      border-radius: 3px;
-      font-weight: 500;
-      font-size: 12px;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .navbar .nav-link:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
+  /* ── Nav ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
 
-    .navbar .nav-link.active {
-      background: rgba(255, 255, 255, 0.25);
-    }
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
 
-    /* Container styling - Soft off-white */
-    .container {
-      background: #f5f7f8;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin: 20px auto;
-      width: fit-content;
-      max-width: 500px;
-    }
+  .nav-links { display: flex; gap: 4px; }
 
-    /* Form styling */
-    form {
-      margin: 0;
-    }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
 
-    h1 {
-      color: #2d5a52;
-      font-weight: 600;
-      margin-bottom: 15px;
-      font-size: 20px;
-      text-align: center;
-    }
+  .nav-links a:hover { color: var(--text); background: var(--surface-2); }
+  .nav-links a.active { color: var(--accent); background: var(--accent-glow); }
 
-    .mb-3 {
-      margin-bottom: 12px;
-    }
+  /* ── Form card ── */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px;
+  }
 
-    .mt-3 {
-      margin-top: 12px;
-    }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 400px;
+  }
 
-    .mt-4 {
-      margin-top: 16px;
-    }
+  .card h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+  }
 
-    .mt-5 {
-      margin-top: 0;
-    }
+  .field {
+    margin-bottom: 14px;
+  }
 
-    label {
-      color: #2d5a52;
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: block;
-      font-size: 13px;
-    }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
 
-    .form-control {
-      border: 1px solid #c8d4d8;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 13px;
-      transition: border-color 0.3s;
-      background: #ffffff;
-      color: #2c3e50;
-      width: 100%;
-      box-sizing: border-box;
-    }
+  .field input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
 
-    .form-control:focus {
-      border-color: #5a9b8f;
-      outline: none;
-      box-shadow: 0 0 0 0.15rem rgba(90, 155, 143, 0.2);
-    }
+  .field input:focus {
+    border-color: var(--accent);
+  }
 
-    /* Select dropdown styling */
-    select.form-control {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c3e50' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 30px;
-      cursor: pointer;
-    }
+  /* ── Password group ── */
+  .input-group {
+    display: flex;
+  }
 
-    /* Input group for password with toggle button */
-    .input-group {
-      display: flex;
-      width: 100%;
-    }
+  .input-group input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    flex: 1;
+  }
 
-    .input-group .form-control {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      flex: 1;
-    }
+  .toggle-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
 
-    .input-group .btn {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      width: auto;
-      margin-top: 0;
-    }
+  .toggle-btn:hover {
+    color: var(--text);
+  }
 
-    /* Button styling */
-    .btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
-      margin-top: 8px;
-    }
+  /* ── Zone pills ── */
+  .zone-pills {
+    display: flex;
+    gap: 8px;
+  }
 
-    .btn-primary {
-      background-color: #5a9b8f;
-      color: white;
-    }
+  .zone-pills input[type="radio"] { display: none; }
 
-    .btn-primary:hover {
-      background-color: #4a8b7f;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    }
+  .zone-pills label {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 0;
+  }
 
-    .btn-outline-secondary {
-      background-color: #90a4ae;
-      color: white;
-      border: 1px solid #90a4ae;
-    }
+  .zone-pills input[type="radio"]:checked + label {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
 
-    .btn-outline-secondary:hover {
-      background-color: #78909c;
-      border-color: #78909c;
-    }
+  .zone-pills label:hover {
+    border-color: #3a3e50;
+    color: var(--text);
+  }
 
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-        margin: 15px;
-        max-width: 90%;
-      }
-    }
-  </style>
+  /* ── Submit ── */
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: opacity 0.2s, transform 0.15s;
+    font-family: inherit;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* ── Error state ── */
+  .error-msg {
+    text-align: center;
+    color: #e04848;
+    padding: 20px 0;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 20px 12px; }
+    .card { padding: 22px 18px; }
+    nav { padding: 10px 14px; }
+    .logo { font-size: 13px; }
+    .nav-links a { font-size: 12px; padding: 5px 10px; }
+  }
+</style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a class="nav-link" href="registerAccount.html">Register Account</a>
-    <a class="nav-link" href="listAccount.html">List Account</a>
+<nav>
+  <div class="logo">IT WEBPLAY</div>
+  <div class="nav-links">
+    <a href="registerAccount.html">+ Add Account</a>
+    <a href="listAccount.html">Accounts</a>
+  </div>
 </nav>
 
-<div class="container">
-    <h1 class="mt-5">Edit Login Information</h1>
-    <div id="editForm" class="mt-3"></div>
-</div>
+<main>
+  <div class="card">
+    <h1>Edit Account</h1>
+    <div id="editForm"></div>
+  </div>
+</main>
 
 <script>
-    // Retrieve user index from URL
-    const params = new URLSearchParams(window.location.search);
-    const userIndex = parseInt(params.get('userIndex'));
+  const params = new URLSearchParams(window.location.search);
+  const userIndex = parseInt(params.get('userIndex'));
+  let auths = JSON.parse(localStorage.getItem('auths'));
 
-    // Retrieve all user information from localStorage
-    let auths = JSON.parse(localStorage.getItem('auths'));
+  if (!isNaN(userIndex) && auths && auths.length > userIndex) {
+    const user = auths[userIndex];
 
-    // Check if user index is valid
-    if (!isNaN(userIndex) && auths && auths.length > userIndex) {
-        // Retrieve specific user information
-        const user = auths[userIndex];
+    const form = document.createElement('form');
+    form.innerHTML = `
+      <div class="field">
+        <label for="displayName">Account Name</label>
+        <input type="text" id="displayName" name="displayName" value="${user.displayName}" required>
+      </div>
+      <div class="field">
+        <label for="username">Email</label>
+        <input type="text" id="username" name="username" value="${user.username}" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <input type="password" id="password" name="password" value="${user.password}" required>
+          <button class="toggle-btn" type="button" id="togglePassword">Show</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Zone</label>
+        <div class="zone-pills">
+          <input type="radio" name="zone" id="zone-e" value="E" ${user.zone === 'E' ? 'checked' : ''}>
+          <label for="zone-e">East</label>
+          <input type="radio" name="zone" id="zone-w" value="W" ${user.zone === 'W' ? 'checked' : ''}>
+          <label for="zone-w">West</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="server">Server</label>
+        <input type="number" id="server" name="server" value="${user.server}" required>
+      </div>
+      <button type="submit" class="submit-btn">Save Changes</button>
+    `;
 
-        // Create user information editing form
-        const form = document.createElement('form');
-        form.classList.add('mt-4');
-        form.innerHTML = `
-            <div class="mb-3">
-                <label for="displayName" class="form-label">Display Name:</label>
-                <input type="text" class="form-control" id="displayName" name="displayName" value="${user.displayName}" required>
-            </div>
-            <div class="mb-3">
-                <label for="username" class="form-label">Email:</label>
-                <input type="text" class="form-control" id="username" name="username" value="${user.username}" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password" value="${user.password}" required>
-                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">Show</button>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="zone" class="form-label">Zone:</label>
-                <select id="zone" name="zone" class="form-control" required>
-                    <option value="E" ${user.zone === 'E' ? 'selected' : ''}>E</option>
-                    <option value="W" ${user.zone === 'W' ? 'selected' : ''}>W</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="server" class="form-label">Server:</label>
-                <input type="number" class="form-control" id="server" name="server" value="${user.server}" required>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        `;
+    document.getElementById('editForm').appendChild(form);
 
-        // Add the form to the page
-        document.getElementById('editForm').appendChild(form);
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordField = document.getElementById('password');
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
 
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            this.textContent = type === 'password' ? 'Show' : 'Hide';
-        });
-
-        // Add event listener for the form submission
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Update user information in localStorage
-            auths[userIndex].displayName = document.getElementById('displayName').value;
-            auths[userIndex].username = document.getElementById('username').value;
-            auths[userIndex].password = document.getElementById('password').value;
-            auths[userIndex].server = document.getElementById('server').value;
-            auths[userIndex].zone = document.getElementById('zone').value;
-            localStorage.setItem('auths', JSON.stringify(auths));
-
-            // Show confirmation message
-            alert('Information updated successfully!');
-            
-            // Close the window after saving
-            window.close();
-        });
-    } else {
-        // Handle case where user index is invalid
-        document.getElementById('editForm').innerHTML = '<p style="color: #d9534f;">Invalid user index or data unavailable.</p>';
-    }
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      auths[userIndex].displayName = document.getElementById('displayName').value;
+      auths[userIndex].username = document.getElementById('username').value;
+      auths[userIndex].password = document.getElementById('password').value;
+      auths[userIndex].server = document.getElementById('server').value;
+      auths[userIndex].zone = document.querySelector('input[name="zone"]:checked')?.value || user.zone;
+      localStorage.setItem('auths', JSON.stringify(auths));
+      alert('Information updated successfully!');
+      window.close();
+    });
+  } else {
+    document.getElementById('editForm').innerHTML = '<p class="error-msg">Invalid user index or data unavailable.</p>';
+  }
 </script>
 
 </body>
