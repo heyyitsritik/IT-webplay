@@ -1,19 +1,21 @@
 /**
- * GET  /api/admin/users          – List all users with account counts
- * POST /api/admin/users          – Update a user's role
- *
- * Body (POST): { user_id: string, role: 'user' | 'admin' }
+ * GET  /api/admin/users – List all users with account counts
+ * POST /api/admin/users – Update a user's role
  */
-import { json, error, requireAdmin } from "../_helpers.js";
+import { json, error, requireAdmin } from "../helpers.js";
 
-export async function onRequestGet(context) {
-  const { data } = context;
-  const adminErr = requireAdmin(data);
+export async function handleAdminUsers(request, method, ctx) {
+  if (method === "GET") return listUsers(ctx);
+  if (method === "POST") return changeRole(request, ctx);
+  return error("Method not allowed", 405);
+}
+
+async function listUsers(ctx) {
+  const adminErr = requireAdmin(ctx);
   if (adminErr) return adminErr;
 
   try {
-    // Fetch all profiles
-    const { data: profiles, error: dbErr } = await data.supabaseAdmin
+    const { data: profiles, error: dbErr } = await ctx.supabaseAdmin
       .from("profiles")
       .select("id, email, role, created_at")
       .order("created_at", { ascending: true });
@@ -21,7 +23,7 @@ export async function onRequestGet(context) {
     if (dbErr) return error(dbErr.message, 500);
 
     // Get account counts per user
-    const { data: counts } = await data.supabaseAdmin
+    const { data: counts } = await ctx.supabaseAdmin
       .from("game_accounts")
       .select("user_id")
       .then(({ data: rows }) => {
@@ -43,13 +45,12 @@ export async function onRequestGet(context) {
   }
 }
 
-export async function onRequestPost(context) {
-  const { data } = context;
-  const adminErr = requireAdmin(data);
+async function changeRole(request, ctx) {
+  const adminErr = requireAdmin(ctx);
   if (adminErr) return adminErr;
 
   try {
-    const body = await context.request.json();
+    const body = await request.json();
     const { user_id, role } = body;
 
     if (!user_id || !["user", "admin"].includes(role)) {
@@ -57,11 +58,11 @@ export async function onRequestPost(context) {
     }
 
     // Prevent self-demotion
-    if (user_id === data.user.id && role !== "admin") {
+    if (user_id === ctx.user.id && role !== "admin") {
       return error("Cannot demote yourself");
     }
 
-    const { error: dbErr } = await data.supabaseAdmin
+    const { error: dbErr } = await ctx.supabaseAdmin
       .from("profiles")
       .update({ role })
       .eq("id", user_id);
@@ -69,8 +70,8 @@ export async function onRequestPost(context) {
     if (dbErr) return error(dbErr.message, 500);
 
     // Log the action
-    await data.supabaseAdmin.from("admin_logs").insert({
-      admin_id: data.user.id,
+    await ctx.supabaseAdmin.from("admin_logs").insert({
+      admin_id: ctx.user.id,
       action: "role_change",
       target_user_id: user_id,
       details: { new_role: role },

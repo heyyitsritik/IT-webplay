@@ -1,19 +1,24 @@
 /**
- * GET  /api/admin/accounts?user_id=xxx  – List a user's game accounts (admin view)
- * DELETE /api/admin/accounts?id=xxx     – Delete any game account (admin)
+ * GET    /api/admin/accounts?user_id=xxx – List a user's game accounts (admin)
+ * DELETE /api/admin/accounts?id=xxx      – Delete any game account (admin)
  */
-import { json, error, requireAdmin } from "../_helpers.js";
+import { json, error, requireAdmin } from "../helpers.js";
 
-export async function onRequestGet(context) {
-  const { data } = context;
-  const adminErr = requireAdmin(data);
+export async function handleAdminAccounts(request, method, ctx) {
+  if (method === "GET") return listAccounts(request, ctx);
+  if (method === "DELETE") return deleteAccount(request, ctx);
+  return error("Method not allowed", 405);
+}
+
+async function listAccounts(request, ctx) {
+  const adminErr = requireAdmin(ctx);
   if (adminErr) return adminErr;
 
   try {
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const userId = url.searchParams.get("user_id");
 
-    let query = data.supabaseAdmin
+    let query = ctx.supabaseAdmin
       .from("game_accounts")
       .select("id, user_id, display_name, zone, server, sort_order, created_at, updated_at")
       .order("sort_order", { ascending: true });
@@ -31,18 +36,17 @@ export async function onRequestGet(context) {
   }
 }
 
-export async function onRequestDelete(context) {
-  const { data } = context;
-  const adminErr = requireAdmin(data);
+async function deleteAccount(request, ctx) {
+  const adminErr = requireAdmin(ctx);
   if (adminErr) return adminErr;
 
   try {
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const id = url.searchParams.get("id");
     if (!id) return error("Account id is required");
 
     // Get account for logging
-    const { data: account } = await data.supabaseAdmin
+    const { data: account } = await ctx.supabaseAdmin
       .from("game_accounts")
       .select("id, user_id, display_name")
       .eq("id", id)
@@ -50,7 +54,7 @@ export async function onRequestDelete(context) {
 
     if (!account) return error("Account not found", 404);
 
-    const { error: dbErr } = await data.supabaseAdmin
+    const { error: dbErr } = await ctx.supabaseAdmin
       .from("game_accounts")
       .delete()
       .eq("id", id);
@@ -58,8 +62,8 @@ export async function onRequestDelete(context) {
     if (dbErr) return error(dbErr.message, 500);
 
     // Log the action
-    await data.supabaseAdmin.from("admin_logs").insert({
-      admin_id: data.user.id,
+    await ctx.supabaseAdmin.from("admin_logs").insert({
+      admin_id: ctx.user.id,
       action: "delete_account",
       target_user_id: account.user_id,
       target_account_id: id,

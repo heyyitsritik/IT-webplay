@@ -3,19 +3,18 @@
  *
  * Imports game accounts from localStorage format.
  * Body: { accounts: [{ username, password, displayName, zone, server }, ...] }
- *
- * Encrypts each credential pair server-side before storing.
  */
-import { encrypt } from "./_crypto.js";
-import { json, error, requireAuth } from "./_helpers.js";
+import { encrypt } from "../crypto.js";
+import { json, error, requireAuth } from "../helpers.js";
 
-export async function onRequestPost(context) {
-  const { data } = context;
-  const authErr = requireAuth(data);
+export async function handleMigrate(request, method, ctx) {
+  if (method !== "POST") return error("Method not allowed", 405);
+
+  const authErr = requireAuth(ctx);
   if (authErr) return authErr;
 
   try {
-    const body = await context.request.json();
+    const body = await request.json();
     const { accounts } = body;
 
     if (!Array.isArray(accounts) || accounts.length === 0) {
@@ -32,10 +31,10 @@ export async function onRequestPost(context) {
       if (!a.username || !a.password) continue;
 
       rows.push({
-        user_id: data.user.id,
+        user_id: ctx.user.id,
         display_name: a.displayName || a.display_name || `Account ${i + 1}`,
-        username_enc: await encrypt(a.username, data.env),
-        password_enc: await encrypt(a.password, data.env),
+        username_enc: await encrypt(a.username, ctx.env),
+        password_enc: await encrypt(a.password, ctx.env),
         zone: a.zone || "E",
         server: parseInt(a.server) || 1,
         sort_order: i,
@@ -47,7 +46,7 @@ export async function onRequestPost(context) {
       return error("No valid accounts to migrate");
     }
 
-    const { data: inserted, error: dbErr } = await data.supabaseAdmin
+    const { data: inserted, error: dbErr } = await ctx.supabaseAdmin
       .from("game_accounts")
       .insert(rows)
       .select("id, display_name, zone, server, sort_order");

@@ -1,48 +1,36 @@
-/**
- * POST /api/game-launch
- *
- * Decrypts game credentials server-side, calls the game API,
- * and returns the final game URL to open in a popup.
- *
- * Body: { account_id: string }
- * Returns: { game_url: string }
- *
- * Plaintext credentials never reach the browser.
- */
-import { decrypt } from "./_crypto.js";
-import { json, error, requireAuth } from "./_helpers.js";
+import { decrypt } from "../crypto.js";
+import { json, error, requireAuth } from "../helpers.js";
 
 const GAME_API = "https://m-xmjen.hkpctimes.com/api/index.php";
 const GAME_CDN_TW = "https://xztwcdn.hkpctimes.com/staticOne/global.html";
 
-export async function onRequestPost(context) {
-  const { data } = context;
-  const authErr = requireAuth(data);
+export async function handleGameLaunch(request, method, ctx) {
+  if (method !== "POST") return error("Method not allowed", 405);
+
+  const authErr = requireAuth(ctx);
   if (authErr) return authErr;
 
   try {
-    const body = await context.request.json();
+    const body = await request.json();
     const { account_id } = body;
     if (!account_id) return error("account_id is required");
 
-    // Fetch the account (service role bypasses RLS, so verify ownership)
-    const { data: account, error: dbErr } = await data.supabaseAdmin
+    const { data: account, error: dbErr } = await ctx.supabaseAdmin
       .from("game_accounts")
       .select("*")
       .eq("id", account_id)
       .single();
 
     if (dbErr || !account) return error("Account not found", 404);
-    if (account.user_id !== data.user.id) {
+    if (account.user_id !== ctx.user.id) {
       return error("Account not found", 404);
     }
 
-    // Decrypt credentials
-    const username = await decrypt(account.username_enc, data.env);
-    const password = await decrypt(account.password_enc, data.env);
+    const username = await decrypt(account.username_enc, ctx.env);
+    const password = await decrypt(account.password_enc, ctx.env);
     const deviceNo = account.device_no || crypto.randomUUID();
 
-    // Step 1: user.login → get token
+    // Step 1: user.login
     const loginUrl = new URL(GAME_API);
     loginUrl.searchParams.set("phone_brand", "oneplus");
     loginUrl.searchParams.set("device_no", deviceNo);
@@ -69,7 +57,7 @@ export async function onRequestPost(context) {
     }
     const token = loginBody.token;
 
-    // Step 2: game.info → get down_url with accessToken
+    // Step 2: game.info
     const infoUrl = new URL(GAME_API);
     infoUrl.searchParams.set("phone_brand", "oneplus");
     infoUrl.searchParams.set("device_no", deviceNo);
@@ -91,8 +79,7 @@ export async function onRequestPost(context) {
       return error("Game info rejected", 502);
     }
 
-    // Extract accessToken from down_url
-    // Use regex to avoid URL.searchParams decoding + as space
+    // Extract accessToken (regex to avoid + decode bug)
     const downUrl = infoBody.down_url;
     const atMatch = downUrl.match(/accessToken=([^&]+)/);
     if (!atMatch) {
@@ -100,7 +87,6 @@ export async function onRequestPost(context) {
     }
     const accessToken = atMatch[1];
 
-    // Build game URL based on zone
     const tz = account.zone === "W" ? "-5" : "+5";
     const gameUrl = `${GAME_CDN_TW}?locate=en_us&pf=gcathkh5&gv=release&accessToken=${accessToken}&timeZone=${encodeURIComponent(tz)}`;
 

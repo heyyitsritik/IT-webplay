@@ -1,19 +1,20 @@
 /**
- * GET /api/admin/logs?limit=50&offset=0  – Fetch admin audit logs
+ * GET /api/admin/logs?limit=50&offset=0 – Fetch admin audit logs
  */
-import { json, error, requireAdmin } from "../_helpers.js";
+import { json, error, requireAdmin } from "../helpers.js";
 
-export async function onRequestGet(context) {
-  const { data } = context;
-  const adminErr = requireAdmin(data);
+export async function handleAdminLogs(request, method, ctx) {
+  if (method !== "GET") return error("Method not allowed", 405);
+
+  const adminErr = requireAdmin(ctx);
   if (adminErr) return adminErr;
 
   try {
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const limit = Math.min(parseInt(url.searchParams.get("limit")) || 50, 200);
     const offset = parseInt(url.searchParams.get("offset")) || 0;
 
-    const { data: logs, error: dbErr } = await data.supabaseAdmin
+    const { data: logs, error: dbErr } = await ctx.supabaseAdmin
       .from("admin_logs")
       .select(`
         id, action, details, created_at,
