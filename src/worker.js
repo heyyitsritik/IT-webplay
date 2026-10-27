@@ -21,6 +21,9 @@ import { handleAdminLogs } from "./routes/admin-logs.js";
  * Returns a `ctx` object that every route handler receives.
  */
 async function runMiddleware(request, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+  }
   const supabaseAdmin = createClient(
     env.SUPABASE_URL,
     env.SUPABASE_SERVICE_ROLE_KEY
@@ -87,9 +90,15 @@ export default {
     }
 
     // Run auth middleware
-    const ctx = await runMiddleware(request, env);
+    let ctx;
     const path = url.pathname;
     const method = request.method;
+
+    try {
+      ctx = await runMiddleware(request, env);
+    } catch (e) {
+      return withCors(error("Server configuration error: " + e.message, 500));
+    }
 
     let response;
     try {
