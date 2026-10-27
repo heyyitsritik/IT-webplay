@@ -15,7 +15,8 @@ export function error(message, status = 400) {
 
 export function requireAuth(data) {
   if (!data.user) {
-    return error("Unauthorized", 401);
+    const reason = data.authDebug || "no token provided";
+    return error("Unauthorized: " + reason, 401);
   }
   return null;
 }

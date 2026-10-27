@@ -48,9 +48,11 @@ async function runMiddleware(request, env) {
           .eq("id", user.id)
           .single();
         ctx.role = profile?.role || "user";
+      } else if (authError) {
+        ctx.authDebug = authError.message || "auth verification failed";
       }
-    } catch {
-      // Invalid token – continue as unauthenticated
+    } catch (e) {
+      ctx.authDebug = "token error: " + e.message;
     }
   }
 
